@@ -7,9 +7,10 @@ import numpy as np
 import json
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
-import os
+from dotenv import load_dotenv
 
-#YOUR KEY HERE
+# Load environment variables from .env file
+load_dotenv()
 
 def chunking(directory_path, tokenizer, chunk_size, para_seperator=" /n /n", separator=" "):
 
@@ -87,9 +88,10 @@ def retrieve_information(query, top_k, mapped_document_db):
             normalized_query = np.linalg.norm(query_embeddings)
             normalized_chunk = np.linalg.norm(chunk_embeddings)
 
+
             if normalized_chunk == 0 or normalized_query == 0:
             # this is being done to avoid division with zero which will give wrong results i.e infinity. Hence to avoid this we set score to 0
-                score == 0
+                score = 0
             else:
             # Now calculationg cosine similarity score
                 score = np.dot(chunk_embeddings, query_embeddings)/ (normalized_chunk * normalized_query)  
@@ -115,7 +117,7 @@ def calculate_cosine_similarity_score(query_embeddings, chunk_embeddings):
         normalized_query = np.linalg.norm(query_embeddings)
         normalized_chunk = np.linalg.norm(chunk_embeddings)
         if normalized_chunk == 0 or normalized_query == 0:
-            score == 0
+            score = 0
         else:
             score = np.dot(chunk_embeddings, query_embeddings)/ (normalized_chunk * normalized_query)  
         return score    
@@ -189,7 +191,7 @@ if __name__ == "__main__":
     top_k = 2
     openai_model = ChatOpenAI(model="gpt-3.5-turbo")
 
-    
+
     #creating document store with chunk id, doc_id, text
     documents = chunking(directory_path, tokenizer, chunk_size, para_seperator, separator)
 
@@ -216,8 +218,8 @@ if __name__ == "__main__":
     #print(relavent_text["text"])
 
    #Uncomment if you have api key 
-    # response = generate_llm_response(openai_model, query, relavent_text)
-    # print(response)
+    response = generate_llm_response(openai_model, query, relavent_text)
+    print(response)
 
 
 
